@@ -1,3 +1,3 @@
-from . import people_in_video
+from . import duration_of_video
 
-algorithms = [people_in_video]
+algorithms = [duration_of_video]
