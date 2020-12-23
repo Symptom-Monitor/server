@@ -5,6 +5,7 @@ import imageio
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import uuid
+import os
 
 def simulate(x, y, alpha, beta, gamma):
   img = Image.open('./public/population-density.png')
@@ -56,7 +57,7 @@ def simulate(x, y, alpha, beta, gamma):
     keyFrames.append(np.fromstring(canvas.tostring_rgb(), dtype=np.uint8).reshape(cols, rows, 3))
 
   # Couldn't figure out a way to use BytesIO directly
-  p = "./generated/" + uuid.uuid4().hex + ".mp4"
+  p = os.path.join(os.getenv('DATA_DIR'), "generated", uuid.uuid4().hex + ".mp4")
 
   imageio.mimsave(p, keyFrames, fps=5)
 

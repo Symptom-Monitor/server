@@ -1,3 +1,7 @@
+# Import env vars
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 import uuid
 import flask
@@ -11,11 +15,15 @@ app = flask.Flask(__name__, static_url_path='')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["DEBUG"] = True
-app.config['UPLOAD_FOLDER'] = './uploads'
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getenv('DATA_DIR'), 'uploads')
 
-# Make static folder if it doesn't exist
-if not os.path.exists('./generated'):
-  os.makedirs('generated')
+# Make folders if they don't exist
+generated_dir = os.path.join(os.getenv('DATA_DIR'), 'generated');
+if not os.path.exists(generated_dir):
+  os.makedirs(generated_dir)
+
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+  os.makedirs(app.config['UPLOAD_FOLDER'])
 
 @app.route('/map', methods=['GET'])
 @cross_origin()
