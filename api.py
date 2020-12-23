@@ -2,14 +2,38 @@ import os
 import uuid
 import flask
 from flask import jsonify, request
+from flask.helpers import send_file, send_from_directory
 from flask_cors import CORS, cross_origin
 from algorithms import all
+from simulation import map
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_url_path='')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = './uploads'
+
+# Make static folder if it doesn't exist
+if not os.path.exists('./generated'):
+  os.makedirs('generated')
+
+@app.route('/map', methods=['GET'])
+@cross_origin()
+def get_map():
+  x = float(request.args.get('x'))
+  y = float(request.args.get('y'))
+  alpha = float(request.args.get('alpha'))
+  beta = float(request.args.get('beta'))
+  gamma = float(request.args.get('gamma'))
+
+  video_path = map.simulate(x, y, alpha, beta, gamma)
+
+  return send_file(video_path, mimetype='video/mp4')
+
+@app.route('/static/<path:path>')
+@cross_origin()
+def send_static(path):
+  return send_from_directory('public', path)
 
 @app.route('/algorithms', methods=['GET'])
 @cross_origin()
