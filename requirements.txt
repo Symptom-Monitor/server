@@ -2,7 +2,8 @@ flask
 flask-cors
 numpy
 matplotlib
-PIL
+Pillow
 imageio
 imageio-ffmpeg
 python-dotenv
+opencv-python-headless

@@ -7,14 +7,13 @@ import uuid
 import flask
 from flask import jsonify, request
 from flask.helpers import send_file, send_from_directory
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from algorithms import all
 from simulation import map
 
 app = flask.Flask(__name__, static_url_path='')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getenv('DATA_DIR'), 'uploads')
 
 # Make folders if they don't exist
@@ -26,7 +25,6 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
   os.makedirs(app.config['UPLOAD_FOLDER'])
 
 @app.route('/map', methods=['GET'])
-@cross_origin()
 def get_map():
   x = float(request.args.get('x'))
   y = float(request.args.get('y'))
@@ -39,12 +37,10 @@ def get_map():
   return send_file(video_path, mimetype='video/mp4')
 
 @app.route('/static/<path:path>')
-@cross_origin()
 def send_static(path):
   return send_from_directory('public', path)
 
 @app.route('/algorithms', methods=['GET'])
-@cross_origin()
 def algorithms():
   algos = []
 
@@ -54,7 +50,6 @@ def algorithms():
   return jsonify(algos)
 
 @app.route('/algorithms/<algo_id>', methods=['POST'])
-@cross_origin()
 def process_video(algo_id):
   if 'file' not in request.files:
     return 'missing file', 400
@@ -87,4 +82,5 @@ def process_video(algo_id):
 
   return jsonify(res)
 
-app.run()
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
